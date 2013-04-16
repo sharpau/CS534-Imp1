@@ -33,6 +33,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		trainingData.push_back(example);
 	}
+	// randomize order for stochastic
 	random_shuffle(trainingData.begin(), trainingData.end());
 
 	vector<vector<double>> testData;
@@ -60,3 +61,42 @@ int _tmain(int argc, _TCHAR* argv[])
 	return 0;
 }
 
+// takes initial weights, test & training data, returns weight vector & total SSE error
+double batchGradientDescent(
+	vector<vector<double>> training, 
+	vector<vector<double>> test,
+	vector<vector<double>>& initWeights, 
+	vector<vector<double>>& finalWeights
+	) {
+
+}
+
+// takes initial weights, test & training data (already randomized), returns weight vector & total SSE error
+double stochasticGradientDescent(
+	vector<vector<double>> training, 
+	vector<vector<double>> test,
+	vector<vector<double>>& initWeights, 
+	vector<vector<double>>& finalWeights
+	) {
+
+}
+
+// takes initial weights, test & training data, returns weight vector & total SSE error
+double batchPerceptron(
+	vector<pair<bool, vector<double>>> training, 
+	vector<pair<bool, vector<double>>> test,
+	vector<vector<double>>& initWeights, 
+	vector<vector<double>>& finalWeights
+	) {
+
+}
+
+// takes initial weights, test & training data, returns weight vector & total SSE error
+double votedPerceptron(
+	vector<pair<bool, vector<double>>> training, 
+	vector<pair<bool, vector<double>>> test,
+	vector<vector<double>>& initWeights, 
+	vector<vector<double>>& finalWeights
+	) {
+
+}
