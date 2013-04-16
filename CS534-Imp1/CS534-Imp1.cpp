@@ -63,46 +63,61 @@ int _tmain(int argc, _TCHAR* argv[])
 
 
 	// read in classification training data
-	vector<pair<int, vector<double>>> trainClass;
-	ifstream trainClassFile("twogaussian.csv");
-	while(trainClassFile.good()) {
+	vector<pair<int, vector<double>>> twoGaussian;
+	ifstream twoGaussianCSV("twogaussian.csv");
+	while(twoGaussianCSV.good()) {
 		int y;
 		double x1, x2;
-		trainClassFile >> y;
-		trainClassFile.get();
-		trainClassFile >> x1;
-		trainClassFile.get();
-		trainClassFile >> x2;
-		trainClassFile.get();
+		twoGaussianCSV >> y;
+		twoGaussianCSV.get();
+		twoGaussianCSV >> x1;
+		twoGaussianCSV.get();
+		twoGaussianCSV >> x2;
+		twoGaussianCSV.get();
 
 		std::vector<double> example;
 		example.push_back(x1);
 		example.push_back(x2);
 
-		trainClass.push_back(make_pair(y, example));
+		twoGaussian.push_back(make_pair(y, example));
 	}
-	random_shuffle(trainClass.begin(), trainClass.end());
+	vector<double> errors;
+	double currentError;
+
+	// initial weight 0 for 2 features
+	vector<double> weights(2, 0);
+
+	while(currentError > 0) {
+		currentError = batchPerceptron(twoGaussian, weights);
+		errors.push_back(currentError);
+	}
+	random_shuffle(twoGaussian.begin(), twoGaussian.end());
+
+
+
+
+
 
 		// read in classification training data
-	vector<pair<int, vector<double>>> testClass;
-	ifstream testClassFile("iris-twoclass.csv");
-	while(testClassFile.good()) {
+	vector<pair<int, vector<double>>> irisData;
+	ifstream irisCSV("iris-twoclass.csv");
+	while(irisCSV.good()) {
 		int y;
 		double x1, x2;
-		testClassFile >> y;
-		testClassFile.get();
-		testClassFile >> x1;
-		testClassFile.get();
-		testClassFile >> x2;
-		testClassFile.get();
+		irisCSV >> y;
+		irisCSV.get();
+		irisCSV >> x1;
+		irisCSV.get();
+		irisCSV >> x2;
+		irisCSV.get();
 
 		std::vector<double> example;
 		example.push_back(x1);
 		example.push_back(x2);
 
-		testClass.push_back(make_pair(y, example));
+		irisData.push_back(make_pair(y, example));
 	}
-	random_shuffle(testClass.begin(), testClass.end());
+	random_shuffle(irisData.begin(), irisData.end());
 
 	return 0;
 }
@@ -111,8 +126,8 @@ int _tmain(int argc, _TCHAR* argv[])
 double batchGradientDescent(
 	vector<vector<double>> training, 
 	vector<vector<double>> test,
-	vector<vector<double>>& initWeights, 
-	vector<vector<double>>& finalWeights
+	vector<double>& initWeights, 
+	vector<double>& finalWeights
 	) {
 	return 1.0f;
 }
@@ -121,28 +136,24 @@ double batchGradientDescent(
 double stochasticGradientDescent(
 	vector<vector<double>> training, 
 	vector<vector<double>> test,
-	vector<vector<double>>& initWeights, 
-	vector<vector<double>>& finalWeights
+	vector<double>& initWeights, 
+	vector<double>& finalWeights
 	) {
 	return 1.0f;
 }
 
-// takes initial weights, test & training data, returns weight vector & total SSE error
+// takes initial weights, training data, returns weight vector & total SSE error
 double batchPerceptron(
-	vector<pair<int, vector<double>>> training, 
-	vector<pair<int, vector<double>>> test,
-	vector<vector<double>>& initWeights, 
-	vector<vector<double>>& finalWeights
+	const vector<pair<int, vector<double>>> training, 
+	vector<double>& weights
 	) {
 	return 1.0f;
 }
 
-// takes initial weights, test & training data, returns weight vector & total SSE error
+// takes initial weights, training data, returns weight vector & total SSE error
 double votedPerceptron(
-	vector<pair<int, vector<double>>> training, 
-	vector<pair<int, vector<double>>> test,
-	vector<vector<double>>& initWeights, 
-	vector<vector<double>>& finalWeights
+	const vector<pair<int, vector<double>>> training, 
+	vector<double>& weights
 	) {
 	return 1.0f;
 }
