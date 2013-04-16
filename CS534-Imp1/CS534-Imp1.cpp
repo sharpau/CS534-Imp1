@@ -12,6 +12,7 @@ using namespace std;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	// read in regression training
 	vector<vector<double>> trainingData;
 	ifstream trainingFile("regression-train.csv");
 	while(trainingFile.good()) {
@@ -36,6 +37,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	// randomize order for stochastic
 	random_shuffle(trainingData.begin(), trainingData.end());
 
+	// read in regression test
 	vector<vector<double>> testData;
 	ifstream testFile("regression-test.csv");
 	while(testFile.good()) {
@@ -58,6 +60,50 @@ int _tmain(int argc, _TCHAR* argv[])
 		testData.push_back(example);
 	}
 	random_shuffle(testData.begin(), testData.end());
+
+
+	// read in classification training data
+	vector<pair<int, vector<double>>> trainClass;
+	ifstream trainClassFile("twogaussian.csv");
+	while(trainClassFile.good()) {
+		int y;
+		double x1, x2;
+		trainClassFile >> y;
+		trainClassFile.get();
+		trainClassFile >> x1;
+		trainClassFile.get();
+		trainClassFile >> x2;
+		trainClassFile.get();
+
+		std::vector<double> example;
+		example.push_back(x1);
+		example.push_back(x2);
+
+		trainClass.push_back(make_pair(y, example));
+	}
+	random_shuffle(trainClass.begin(), trainClass.end());
+
+		// read in classification training data
+	vector<pair<int, vector<double>>> testClass;
+	ifstream testClassFile("iris-twoclass.csv");
+	while(testClassFile.good()) {
+		int y;
+		double x1, x2;
+		testClassFile >> y;
+		testClassFile.get();
+		testClassFile >> x1;
+		testClassFile.get();
+		testClassFile >> x2;
+		testClassFile.get();
+
+		std::vector<double> example;
+		example.push_back(x1);
+		example.push_back(x2);
+
+		testClass.push_back(make_pair(y, example));
+	}
+	random_shuffle(testClass.begin(), testClass.end());
+
 	return 0;
 }
 
@@ -68,7 +114,7 @@ double batchGradientDescent(
 	vector<vector<double>>& initWeights, 
 	vector<vector<double>>& finalWeights
 	) {
-
+	return 1.0f;
 }
 
 // takes initial weights, test & training data (already randomized), returns weight vector & total SSE error
@@ -78,25 +124,25 @@ double stochasticGradientDescent(
 	vector<vector<double>>& initWeights, 
 	vector<vector<double>>& finalWeights
 	) {
-
+	return 1.0f;
 }
 
 // takes initial weights, test & training data, returns weight vector & total SSE error
 double batchPerceptron(
-	vector<pair<bool, vector<double>>> training, 
-	vector<pair<bool, vector<double>>> test,
+	vector<pair<int, vector<double>>> training, 
+	vector<pair<int, vector<double>>> test,
 	vector<vector<double>>& initWeights, 
 	vector<vector<double>>& finalWeights
 	) {
-
+	return 1.0f;
 }
 
 // takes initial weights, test & training data, returns weight vector & total SSE error
 double votedPerceptron(
-	vector<pair<bool, vector<double>>> training, 
-	vector<pair<bool, vector<double>>> test,
+	vector<pair<int, vector<double>>> training, 
+	vector<pair<int, vector<double>>> test,
 	vector<vector<double>>& initWeights, 
 	vector<vector<double>>& finalWeights
 	) {
-
+	return 1.0f;
 }
