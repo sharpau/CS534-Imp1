@@ -94,14 +94,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	do {
 		currentError = batchPerceptron(twoGaussian, weights);
 		errors.push_back(currentError);
-	} while(abs(currentError) > 0.05);
+	} while(abs(currentError) > 0.07); // never converges to <.06, but <.07 works
+	// TODO: write weights, currentError to CSV files
 
-
-
-
-
-
-		// read in classification training data
+	// read in classification training data
 	vector<pair<int, vector<double>>> irisData;
 	ifstream irisCSV("iris-twoclass.csv");
 	while(irisCSV.good()) {
@@ -150,17 +146,19 @@ double batchPerceptron(
 	const vector<pair<int, vector<double>>> training, 
 	vector<double>& weights
 	) {
-
+	// delta vector as 0s
 	vector<double> delta(weights.size(), 0);
-	for(auto example : training) {
 
+	// go through all examples
+	for(auto example : training) {
+		// make sure none of the examples are invalid
 		assert(weights.size() == example.second.size());
 
 		double um = 0;
 		for(int i = 0; i < weights.size(); i++) {
 			um += (weights[i] * example.second[i]);
 		}
-		if(example.first * um <= 0) {
+		if((example.first * um) <= 0) {
 			for(int i = 0; i < delta.size(); i++) {
 				delta[i] -= example.first * example.second[i];
 			}
