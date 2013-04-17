@@ -10,7 +10,7 @@
 #include <assert.h>
 #include "CS534-Imp1.hpp"
 
-const int num_epochs = 10;
+const int num_epochs = 50;
 
 using namespace std;
 
@@ -62,8 +62,8 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	vector<double> batchGradientWeights (trainingData[0].size()-1);
 	vector<double> stochasticGradientWeights (trainingData[0].size()-1);
-	vector<double> batchGradientTrainingError (num_epochs);
-	vector<double> stochasticGradientTrainingError (num_epochs);
+	vector<double> batchGradientTrainingError;
+	vector<double> stochasticGradientTrainingError;
 
 	//init weight vectors
 	for(vector<double>::size_type i = 0; i<trainingData[0].size()-1; i++){
@@ -114,7 +114,25 @@ int _tmain(int argc, _TCHAR* argv[])
 	batchGradientTestError = testGradientDescent(testData, batchGradientWeights);
 	stochasticGradientTestError = testGradientDescent(testData, stochasticGradientWeights);
 
+
 	// DO THIS: output trial results in some format
+
+	cout << "gradient descent learning weight: " << gradientLearningRate * trainingData.size() << "/" << trainingData.size() << endl;
+	cout << "batch gradient weights: " << batchGradientWeights[0] << ", " << batchGradientWeights[1] << ", " << batchGradientWeights[2] << endl;
+	for(vector<double>::size_type i = 0; i<batchGradientTrainingError.size(); i++){
+		cout << "batch gradient sse " << i << ":" << batchGradientTrainingError[i] << endl;
+	}
+	cout << "batch gradient test sse: " << batchGradientTestError << endl;
+
+	cout << "stochastic gradient weights: " << stochasticGradientWeights[0] << ", " << stochasticGradientWeights[1] << ", " << stochasticGradientWeights[2] << endl;
+	for(vector<double>::size_type i = 0; i<stochasticGradientTrainingError.size(); i++){
+		cout << "stochastic gradient sse " << i << ":" << stochasticGradientTrainingError[i] << endl;
+	}
+	cout << "stochastic gradient test sse: " << stochasticGradientTestError << endl;
+
+	// makeshift breakpoint
+	int tempo;
+	cin >> tempo;
 
 	// read in classification training data
 	vector<pair<int, vector<double>>> twoGaussian;
