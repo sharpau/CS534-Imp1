@@ -73,7 +73,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	// run batch gradient descent training
 	for(i = 0; i<num_epochs; i++){
-		gradientLearningRate = (1 / trainingData.size());
+		gradientLearningRate = (1.0f / trainingData.size());
 		batchGradientTrainingError.push_back(batchGradientDescent(trainingData, batchGradientWeights, gradientLearningRate));
 	}
 	// run stochastic gradient descent training
@@ -203,7 +203,7 @@ double batchGradientDescent(
 			result1 = 0;
 			for(vector<double>::size_type j = 0; j<weights.size(); j++){
 				result1 += weights[j] * training[i][j];
-				result2 = result1 - training[i][weights.size()-1];
+				result2 = result1 - training[i][weights.size()];
 			}
 			sse += 0.5 * pow(result2, 2);
 			for(vector<double>::size_type j = 0; j<weights.size(); j++){
@@ -250,7 +250,7 @@ double stochasticGradientDescent(
 			result1 = 0;
 			for(vector<double>::size_type j = 0; j<weights.size(); j++){
 				result1 += weights[j] * training[i][j];
-				result2 = result1 - training[i][weights.size()-1];
+				result2 = result1 - training[i][weights.size()];
 			}
 			sse += 0.5 * pow(result2, 2);
 			for(vector<double>::size_type j = 0; j<weights.size(); j++){
