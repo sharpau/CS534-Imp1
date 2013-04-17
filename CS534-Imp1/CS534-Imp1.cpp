@@ -279,7 +279,7 @@ double testGradientDescent(
 
 			for(vector<double>::size_type j = 0; j<weights.size(); j++){
 				result1 += weights[j] * test[i][j];
-				result2 = result1 - test[i][weights.size()-1];
+				result2 = result1 - test[i][weights.size()];
 			}
 			sse += 0.5 * pow(result2, 2);
 		}
