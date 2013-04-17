@@ -10,7 +10,7 @@
 #include <assert.h>
 #include "CS534-Imp1.hpp"
 
-const int numEpochs = 10;
+const int num_epochs = 10;
 
 using namespace std;
 
@@ -44,24 +44,24 @@ int _tmain(int argc, _TCHAR* argv[])
 		trainingData.push_back(example);
 	}
 
-	vector<double> batchGradientWeights;
-	vector<double> stochasticGradientWeights;
-	vector<double> batchGradientTrainingError;
-	vector<double> stochasticGradientTrainingError;
+	vector<double> batchGradientWeights (trainingData[0].size()-1);
+	vector<double> stochasticGradientWeights (trainingData[0].size()-1);
+	vector<double> batchGradientTrainingError (num_epochs);
+	vector<double> stochasticGradientTrainingError (num_epochs);
 
 	//init weight vectors
-	for(i = 0; i<trainingData[0].size(); i++){
+	for(i = 0; i<trainingData[0].size()-1; i++){
 		batchGradientWeights[i] = 0;
 		stochasticGradientWeights[i] = 0;
 	}
 
 	// run batch gradient descent training
-	for(i = 0; i<numEpochs; i++){
+	for(i = 0; i<num_epochs; i++){
 		gradientLearningRate = (1 / trainingData.size());
 		batchGradientTrainingError.push_back(batchGradientDescent(trainingData, batchGradientWeights, gradientLearningRate));
 	}
 	// run stochastic gradient descent training
-	for(i = 0; i<numEpochs; i++){
+	for(i = 0; i<num_epochs; i++){
 		// randomize order for stochastic
 		random_shuffle(trainingData.begin(), trainingData.end());
 		stochasticGradientTrainingError.push_back(stochasticGradientDescent(trainingData, stochasticGradientWeights, gradientLearningRate));
@@ -164,7 +164,6 @@ double batchGradientDescent(
 		int i, j;
 		double result1, result2, sse;
 		vector<double> gradient (weights.size());
-		vector<double>::iterator wIterate;
 		
 		//  psuedocode:
 		// [outside: init weights to 0]
@@ -213,7 +212,6 @@ double stochasticGradientDescent(
 		int i, j;
 		double result1, result2, sse;
 		vector<double> gradient (weights.size());
-		vector<double>::iterator wIterate;
 		
 		//  psuedocode:
 		// [outside: init weights to 0]
