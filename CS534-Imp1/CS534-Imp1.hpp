@@ -9,18 +9,18 @@ void doGradients(
 	);
 
 double batchGradientDescent(
-	vector<vector<double>> training, 
-	vector<double> &weights,
+	std::vector<std::vector<double>> training, 
+	std::vector<double> &weights,
 	double learningRate
 	);
 double stochasticGradientDescent(
-	vector<vector<double>> training, 
-	vector<double> &weights,
+	std::vector<std::vector<double>> training, 
+	std::vector<double> &weights,
 	double learningRate
 	);
 double testGradientDescent(
-		vector<vector<double>> test,
-		vector<double> &weights
+		std::vector<std::vector<double>> test,
+		std::vector<double> &weights
 	);
 
 void batchPerceptron(

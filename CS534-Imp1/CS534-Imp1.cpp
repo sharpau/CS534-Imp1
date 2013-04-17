@@ -111,8 +111,6 @@ void doGradients(
 
 
 	// DO THIS: output trial results in some format
-<<<<<<< HEAD
-=======
 
 	cout << "gradient descent learning weight: " << gradientLearningRate * trainingData.size() << "/" << trainingData.size() << endl;
 	cout << "batch gradient weights: " << batchGradientWeights[0] << ", " << batchGradientWeights[1] << ", " << batchGradientWeights[2] << endl;
@@ -131,106 +129,6 @@ void doGradients(
 	int tempo;
 	cin >> tempo;
 
-	// read in classification training data
-	vector<pair<int, vector<double>>> twoGaussian;
-	ifstream twoGaussianCSV("twogaussian.csv");
-	while(twoGaussianCSV.good()) {
-		int y;
-		double x1, x2;
-		twoGaussianCSV >> y;
-		twoGaussianCSV.get();
-		twoGaussianCSV >> x1;
-		twoGaussianCSV.get();
-		twoGaussianCSV >> x2;
-		twoGaussianCSV.get();
-
-		std::vector<double> example;
-		example.push_back(x1);
-		example.push_back(x2);
-
-		twoGaussian.push_back(make_pair(y, example));
-	}
-
-	vector<double> errors;
-	double currentError;
-	vector<int> misClassHistory;
-	int misClass;
-
-	// initial weight 0 for 2 features
-	vector<double> weights(2, 0);
-
-	do {
-		currentError = batchPerceptron(twoGaussian, weights, misClass);
-		errors.push_back(currentError);
-		misClassHistory.push_back(misClass);
-	} while(abs(currentError) > 0.07); // never converges to <.06, but <.07 works
-	// TODO: write weights, currentError to CSV files
-
-	// read in classification training data
-	vector<pair<int, vector<double>>> irisData;
-	ifstream irisCSV("iris-twoclass.csv");
-	while(irisCSV.good()) {
-		int y;
-		double x1, x2;
-		irisCSV >> y;
-		irisCSV.get();
-		irisCSV >> x1;
-		irisCSV.get();
-		irisCSV >> x2;
-		irisCSV.get();
-
-		std::vector<double> example;
-		example.push_back(x1);
-		example.push_back(x2);
-
-		irisData.push_back(make_pair(y, example));
-	}
-
-	vector<double> vWeights(2, 0);
-	vector<double> errorHistory;
-	vector<vector<double>> weightHistory;
-	//weightHistory.push_back(vWeights);
-	vector<int> c;
-	for(int t = 0; t < 100; t++) {
-		// randomize for each epoch
-		random_shuffle(irisData.begin(), irisData.end());
-		c.push_back(0);
-
-		for(auto example : irisData) {
-			double um = 0;
-			for(int i = 0; i < vWeights.size(); i++) {
-				um += (vWeights[i] * example.second[i]);
-			}
-			if((um * example.first) <= 0) {
-				for(int i = 0; i < vWeights.size(); i++) {
-					vWeights[i] += (example.second[i] * example.first);
-				}
-				//c[t] = 0;
-			}
-			else {
-				c[t]++;
-			}
-		}
-		weightHistory.push_back(vWeights);
-		// time to vote!
-		errorHistory.push_back(0);
-		for(auto example : irisData) {
-			double voteResult = 0;
-			for(int i = 0; i < t + 1; i++) {
-				double thisVote = 0;
-				for(int j = 0; j < vWeights.size(); j++) {
-					thisVote += weightHistory[t][j] * example.second[j];
-				}
-				voteResult += c[i] * sign(thisVote);
-			}
-			if(example.first != sign(voteResult)) {
-				errorHistory[t]++;
-			}
-		}
-	}
-
-	return 0;
->>>>>>> a1ce776e00b4d8092b7416cb2c2d851cfd65bceb
 }
 
 // takes initial weights, test & training data, returns weight vector & total SSE error
