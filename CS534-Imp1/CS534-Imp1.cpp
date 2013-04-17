@@ -14,6 +14,22 @@ const int num_epochs = 10;
 
 using namespace std;
 
+// function prototypes
+double batchGradientDescent(
+	vector<vector<double>> training, 
+	vector<double> &weights,
+	double learningRate
+	);
+double stochasticGradientDescent(
+	vector<vector<double>> training, 
+	vector<double> &weights,
+	double learningRate
+	);
+double testGradientDescent(
+		vector<vector<double>> test,
+		vector<double> &weights
+	);
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	// loop var
@@ -50,7 +66,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	vector<double> stochasticGradientTrainingError (num_epochs);
 
 	//init weight vectors
-	for(i = 0; i<trainingData[0].size()-1; i++){
+	for(vector<double>::size_type i = 0; i<trainingData[0].size()-1; i++){
 		batchGradientWeights[i] = 0;
 		stochasticGradientWeights[i] = 0;
 	}
@@ -161,7 +177,6 @@ double batchGradientDescent(
 	vector<double> &weights,
 	double learningRate
 	) {
-		int i, j;
 		double result1, result2, sse;
 		vector<double> gradient (weights.size());
 		
@@ -181,21 +196,21 @@ double batchGradientDescent(
 		//		weights[i] = weights[i] - (learnrate) * gradient[i]
 		//	[return from function, then store sse in vector.  End program by outputting error vector.]
 		sse = 0;
-		for(i = 0; i<weights.size(); i++){
+		for(vector<double>::size_type i = 0; i<weights.size(); i++){
 			gradient[i] = 0;
 		}
-		for(i = 0; i<training.size(); i++){
+		for(vector<vector<double>>::size_type i = 0; i<training.size(); i++){
 			result1 = 0;
-			for(j = 0; j<weights.size(); j++){
+			for(vector<double>::size_type j = 0; j<weights.size(); j++){
 				result1 += weights[j] * training[i][j];
 				result2 = result1 - training[i][weights.size()-1];
 			}
 			sse += 0.5 * pow(result2, 2);
-			for(j = 0; j<weights.size(); j++){
+			for(vector<double>::size_type j = 0; j<weights.size(); j++){
 				gradient[j] += result2 * training[i][j];
 			}
 		}
-		for(i = 0; i<weights.size(); i++){
+		for(vector<double>::size_type i = 0; i<weights.size(); i++){
 			weights[i] = weights[i] - learningRate * gradient[i];
 		}
 
@@ -208,8 +223,6 @@ double stochasticGradientDescent(
 	vector<double> &weights,
 	double learningRate
 	) {
-
-		int i, j;
 		double result1, result2, sse;
 		vector<double> gradient (weights.size());
 		
@@ -230,20 +243,20 @@ double stochasticGradientDescent(
 		//		
 		//	[return from function, then store sse in vector.  End program by outputting error vector.]
 		sse = 0;
-		for(i = 0; i<weights.size(); i++){
+		for(vector<double>::size_type i = 0; i<weights.size(); i++){
 			gradient[i] = 0;
 		}
-		for(i = 0; i<training.size(); i++){
+		for(vector<vector<double>>::size_type i = 0; i<training.size(); i++){
 			result1 = 0;
-			for(j = 0; j<weights.size(); j++){
+			for(vector<double>::size_type j = 0; j<weights.size(); j++){
 				result1 += weights[j] * training[i][j];
 				result2 = result1 - training[i][weights.size()-1];
 			}
 			sse += 0.5 * pow(result2, 2);
-			for(j = 0; j<weights.size(); j++){
+			for(vector<double>::size_type j = 0; j<weights.size(); j++){
 				gradient[j] += result2 * training[i][j];
 			}
-			for(j = 0; j<weights.size(); j++){
+			for(vector<double>::size_type j = 0; j<weights.size(); j++){
 				weights[j] = weights[j] - learningRate * gradient[j];
 			}
 		}
@@ -258,14 +271,13 @@ double testGradientDescent(
 		vector<vector<double>> test,
 		vector<double> &weights
 	){
-		int i, j;
 		double sse, result1, result2;
 
 		sse = 0;
-		for(i = 0; i<test.size(); i++){
+		for(vector<vector<double>>::size_type i = 0; i<test.size(); i++){
 			result1 = 0;
 
-			for(j = 0; j<weights.size(); j++){
+			for(vector<double>::size_type j = 0; j<weights.size(); j++){
 				result1 += weights[j] * test[i][j];
 				result2 = result1 - test[i][weights.size()-1];
 			}
