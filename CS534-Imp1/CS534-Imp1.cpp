@@ -359,17 +359,18 @@ void votedPerceptron(
 		irisCSV.get();
 
 		std::vector<double> example;
+		example.push_back(1.0f);
 		example.push_back(x1);
 		example.push_back(x2);
 
 		irisData.push_back(make_pair(y, example));
 	}
 
-	vector<double> vWeights(2, 0);
-	vector<double> errorHistory;
+	vector<double> vWeights(irisData[0].second.size(), 0);
 	vector<vector<double>> weightHistory;
-	//weightHistory.push_back(vWeights);
-	vector<int> c;
+	weightHistory.push_back(vWeights);
+	vector<int> c(1, 0); // c_0 = 0
+	int n = 0; // n = number of weight sets
 	for(int t = 0; t < 100; t++) {
 		// randomize for each epoch
 		random_shuffle(irisData.begin(), irisData.end());
@@ -384,26 +385,33 @@ void votedPerceptron(
 				for(int i = 0; i < vWeights.size(); i++) {
 					vWeights[i] += (example.second[i] * example.first);
 				}
-				//c[t] = 0;
+				weightHistory.push_back(vWeights);
+				n++; // still equal to weightHistory.size() I think
+				c.push_back(0);
 			}
 			else {
-				c[t]++;
+				c[n]++;
 			}
 		}
-		weightHistory.push_back(vWeights);
-		// time to vote!
-		errorHistory.push_back(0);
+	}
+	
+	// time to vote!
+	// want to see each vote from history of size 1 to n
+	vector<int> errorHistory(n, 0);
+	for(int i = 0; i < n; i++) {
+		// voting on all examples
 		for(auto example : irisData) {
+			// all weight sets up to this point will vote
 			double voteResult = 0;
-			for(int i = 0; i < t + 1; i++) {
+			for(int j = 0; j <= i; j++) {
 				double thisVote = 0;
-				for(int j = 0; j < vWeights.size(); j++) {
-					thisVote += weightHistory[t][j] * example.second[j];
+				for(int k = 0; k < vWeights.size(); k++) {
+					thisVote += weightHistory[j][k] * example.second[k];
 				}
-				voteResult += c[i] * sign(thisVote);
+				voteResult += sign(thisVote);
 			}
 			if(example.first != sign(voteResult)) {
-				errorHistory[t]++;
+				errorHistory[i]++;
 			}
 		}
 	}
