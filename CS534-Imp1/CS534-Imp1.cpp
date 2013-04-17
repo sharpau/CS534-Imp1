@@ -135,15 +135,19 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		twoGaussian.push_back(make_pair(y, example));
 	}
+
 	vector<double> errors;
 	double currentError;
+	vector<int> misClassHistory;
+	int misClass;
 
 	// initial weight 0 for 2 features
 	vector<double> weights(2, 0);
 
 	do {
-		currentError = batchPerceptron(twoGaussian, weights);
+		currentError = batchPerceptron(twoGaussian, weights, misClass);
 		errors.push_back(currentError);
+		misClassHistory.push_back(misClass);
 	} while(abs(currentError) > 0.07); // never converges to <.06, but <.07 works
 	// TODO: write weights, currentError to CSV files
 
@@ -166,7 +170,51 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		irisData.push_back(make_pair(y, example));
 	}
-	random_shuffle(irisData.begin(), irisData.end());
+
+	vector<double> vWeights(2, 0);
+	vector<double> errorHistory;
+	vector<vector<double>> weightHistory;
+	weightHistory.push_back(vWeights);
+	vector<int> c;
+	c.push_back(0);
+	int n = 0;
+	for(int t = 0; t < 100; t++) {
+		// randomize for each epoch
+		random_shuffle(irisData.begin(), irisData.end());
+
+		for(auto example : irisData) {
+			double um = 0;
+			for(int i = 0; i < vWeights.size(); i++) {
+				um += (vWeights[i] * example.second[i]);
+			}
+			if((um * example.first) <= 0) {
+				for(int i = 0; i < vWeights.size(); i++) {
+					vWeights[i] += (example.second[i] * example.first);
+				}
+				n++;
+				c[t] = 0;
+			}
+			else {
+				c[t]++;
+			}
+		}
+		weightHistory.push_back(vWeights);
+		// time to vote!
+		errorHistory.push_back(0);
+		for(auto example : irisData) {
+			double voteResult = 0;
+			for(int i = 0; i < t + 2; i++) {
+				double thisVote = 0;
+				for(int j = 0; j < vWeights.size(); j++) {
+					thisVote += weightHistory[t][j] * example.second[j];
+				}
+				voteResult += c[i] * sign(thisVote);
+			}
+			if(example.first != sign(voteResult)) {
+				errorHistory[t]++;
+			}
+		}
+	}
 
 	return 0;
 }
@@ -287,13 +335,16 @@ double testGradientDescent(
 		return sse;
 }
 
-// takes initial weights, training data, returns weight vector & total SSE error
+// takes initial weights, training data, returns weight vector & error (norm of delta)
+// runs through data set once
 double batchPerceptron(
 	const vector<pair<int, vector<double>>> training, 
-	vector<double>& weights
+	vector<double>& weights,
+	int & misClass
 	) {
 	// delta vector as 0s
 	vector<double> delta(weights.size(), 0);
+	misClass = 0;
 
 	// go through all examples
 	for(auto example : training) {
@@ -305,6 +356,7 @@ double batchPerceptron(
 			um += (weights[i] * example.second[i]);
 		}
 		if((example.first * um) <= 0) {
+			misClass++;
 			for(int i = 0; i < delta.size(); i++) {
 				delta[i] -= example.first * example.second[i];
 			}
