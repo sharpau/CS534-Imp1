@@ -1,12 +1,15 @@
-double batchPerceptron(
+void batchPerceptron(
+	void
+	);
+
+double batchPerceptronEpoch(
 	const std::vector<std::pair<int, std::vector<double>>> training, 
 	std::vector<double>& weights,
 	int & misClass
 	);
 
-double votedPerceptron(
-	const std::vector<std::pair<int, std::vector<double>>> training, 
-	std::vector<double>& weights
+void votedPerceptron(
+	void
 	);
 
 int sign(int in) {

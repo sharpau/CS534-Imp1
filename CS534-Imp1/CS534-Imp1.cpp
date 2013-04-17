@@ -116,103 +116,9 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	// DO THIS: output trial results in some format
 
-	// read in classification training data
-	vector<pair<int, vector<double>>> twoGaussian;
-	ifstream twoGaussianCSV("twogaussian.csv");
-	while(twoGaussianCSV.good()) {
-		int y;
-		double x1, x2;
-		twoGaussianCSV >> y;
-		twoGaussianCSV.get();
-		twoGaussianCSV >> x1;
-		twoGaussianCSV.get();
-		twoGaussianCSV >> x2;
-		twoGaussianCSV.get();
+	batchPerceptron();
 
-		std::vector<double> example;
-		example.push_back(x1);
-		example.push_back(x2);
-
-		twoGaussian.push_back(make_pair(y, example));
-	}
-
-	vector<double> errors;
-	double currentError;
-	vector<int> misClassHistory;
-	int misClass;
-
-	// initial weight 0 for 2 features
-	vector<double> weights(2, 0);
-
-	do {
-		currentError = batchPerceptron(twoGaussian, weights, misClass);
-		errors.push_back(currentError);
-		misClassHistory.push_back(misClass);
-	} while(abs(currentError) > 0.07); // never converges to <.06, but <.07 works
-	// TODO: write weights, currentError to CSV files
-
-	// read in classification training data
-	vector<pair<int, vector<double>>> irisData;
-	ifstream irisCSV("iris-twoclass.csv");
-	while(irisCSV.good()) {
-		int y;
-		double x1, x2;
-		irisCSV >> y;
-		irisCSV.get();
-		irisCSV >> x1;
-		irisCSV.get();
-		irisCSV >> x2;
-		irisCSV.get();
-
-		std::vector<double> example;
-		example.push_back(x1);
-		example.push_back(x2);
-
-		irisData.push_back(make_pair(y, example));
-	}
-
-	vector<double> vWeights(2, 0);
-	vector<double> errorHistory;
-	vector<vector<double>> weightHistory;
-	//weightHistory.push_back(vWeights);
-	vector<int> c;
-	for(int t = 0; t < 100; t++) {
-		// randomize for each epoch
-		random_shuffle(irisData.begin(), irisData.end());
-		c.push_back(0);
-
-		for(auto example : irisData) {
-			double um = 0;
-			for(int i = 0; i < vWeights.size(); i++) {
-				um += (vWeights[i] * example.second[i]);
-			}
-			if((um * example.first) <= 0) {
-				for(int i = 0; i < vWeights.size(); i++) {
-					vWeights[i] += (example.second[i] * example.first);
-				}
-				//c[t] = 0;
-			}
-			else {
-				c[t]++;
-			}
-		}
-		weightHistory.push_back(vWeights);
-		// time to vote!
-		errorHistory.push_back(0);
-		for(auto example : irisData) {
-			double voteResult = 0;
-			for(int i = 0; i < t + 1; i++) {
-				double thisVote = 0;
-				for(int j = 0; j < vWeights.size(); j++) {
-					thisVote += weightHistory[t][j] * example.second[j];
-				}
-				voteResult += c[i] * sign(thisVote);
-			}
-			if(example.first != sign(voteResult)) {
-				errorHistory[t]++;
-			}
-		}
-	}
+	votedPerceptron();
 
 	return 0;
 }
@@ -333,9 +239,49 @@ double testGradientDescent(
 		return sse;
 }
 
+void batchPerceptron(
+	void
+	) {
+	// read in classification training data
+	vector<pair<int, vector<double>>> twoGaussian;
+	ifstream twoGaussianCSV("twogaussian.csv");
+	while(twoGaussianCSV.good()) {
+		int y;
+		double x1, x2;
+		twoGaussianCSV >> y;
+		twoGaussianCSV.get();
+		twoGaussianCSV >> x1;
+		twoGaussianCSV.get();
+		twoGaussianCSV >> x2;
+		twoGaussianCSV.get();
+
+		std::vector<double> example;
+		example.push_back(1.0f); // dummy feature for w0
+		example.push_back(x1);
+		example.push_back(x2);
+
+		twoGaussian.push_back(make_pair(y, example));
+	}
+
+	vector<double> errors;
+	double currentError;
+	vector<int> misClassHistory;
+	int misClass;
+
+	// initial weight 0 for 2 features
+	vector<double> weights(twoGaussian[0].second.size(), 0);
+
+	do {
+		currentError = batchPerceptronEpoch(twoGaussian, weights, misClass);
+		errors.push_back(currentError);
+		misClassHistory.push_back(misClass);
+	} while(abs(currentError) > 0.01); // never converges to <.06, but <.07 works
+	// TODO: write weights, currentError to CSV files
+}
+
 // takes initial weights, training data, returns weight vector & error (norm of delta)
 // runs through data set once
-double batchPerceptron(
+double batchPerceptronEpoch(
 	const vector<pair<int, vector<double>>> training, 
 	vector<double>& weights,
 	int & misClass
@@ -364,8 +310,8 @@ double batchPerceptron(
 	double norm = 0;
 	for(int i = 0; i < delta.size(); i++) {
 		delta[i] /= training.size();
-		weights[i] -= delta[i]; // learning rate = 1
-		norm += delta[i] * delta[i]; // sum of squares for vector norm
+		weights[i] -= 1.0*delta[i]; // learning rate = 1
+		norm += pow(delta[i], 2); // sum of squares for vector norm
 	}
 	norm = sqrt(norm); // sqrt of sum of squares for vector norm
 	
@@ -374,9 +320,69 @@ double batchPerceptron(
 }
 
 // takes initial weights, training data, returns weight vector & total SSE error
-double votedPerceptron(
-	const vector<pair<int, vector<double>>> training, 
-	vector<double>& weights
+void votedPerceptron(
+	void
 	) {
-	return 1.0f;
+	// read in classification training data
+	vector<pair<int, vector<double>>> irisData;
+	ifstream irisCSV("iris-twoclass.csv");
+	while(irisCSV.good()) {
+		int y;
+		double x1, x2;
+		irisCSV >> y;
+		irisCSV.get();
+		irisCSV >> x1;
+		irisCSV.get();
+		irisCSV >> x2;
+		irisCSV.get();
+
+		std::vector<double> example;
+		example.push_back(x1);
+		example.push_back(x2);
+
+		irisData.push_back(make_pair(y, example));
+	}
+
+	vector<double> vWeights(2, 0);
+	vector<double> errorHistory;
+	vector<vector<double>> weightHistory;
+	//weightHistory.push_back(vWeights);
+	vector<int> c;
+	for(int t = 0; t < 100; t++) {
+		// randomize for each epoch
+		random_shuffle(irisData.begin(), irisData.end());
+		c.push_back(0);
+
+		for(auto example : irisData) {
+			double um = 0;
+			for(int i = 0; i < vWeights.size(); i++) {
+				um += (vWeights[i] * example.second[i]);
+			}
+			if((um * example.first) <= 0) {
+				for(int i = 0; i < vWeights.size(); i++) {
+					vWeights[i] += (example.second[i] * example.first);
+				}
+				//c[t] = 0;
+			}
+			else {
+				c[t]++;
+			}
+		}
+		weightHistory.push_back(vWeights);
+		// time to vote!
+		errorHistory.push_back(0);
+		for(auto example : irisData) {
+			double voteResult = 0;
+			for(int i = 0; i < t + 1; i++) {
+				double thisVote = 0;
+				for(int j = 0; j < vWeights.size(); j++) {
+					thisVote += weightHistory[t][j] * example.second[j];
+				}
+				voteResult += c[i] * sign(thisVote);
+			}
+			if(example.first != sign(voteResult)) {
+				errorHistory[t]++;
+			}
+		}
+	}
 }
