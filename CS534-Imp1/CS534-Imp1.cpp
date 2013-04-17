@@ -7,8 +7,12 @@
 #include <fstream>
 #include <string>
 #include <algorithm>
+#include <assert.h>
+#include "CS534-Imp1.hpp"
 
 using namespace std;
+
+
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -87,11 +91,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	// initial weight 0 for 2 features
 	vector<double> weights(2, 0);
 
-	while(currentError > 0) {
+	do {
 		currentError = batchPerceptron(twoGaussian, weights);
 		errors.push_back(currentError);
-	}
-	random_shuffle(twoGaussian.begin(), twoGaussian.end());
+	} while(abs(currentError) > 0.05);
 
 
 
@@ -147,7 +150,33 @@ double batchPerceptron(
 	const vector<pair<int, vector<double>>> training, 
 	vector<double>& weights
 	) {
-	return 1.0f;
+
+	vector<double> delta(weights.size(), 0);
+	for(auto example : training) {
+
+		assert(weights.size() == example.second.size());
+
+		double um = 0;
+		for(int i = 0; i < weights.size(); i++) {
+			um += (weights[i] * example.second[i]);
+		}
+		if(example.first * um <= 0) {
+			for(int i = 0; i < delta.size(); i++) {
+				delta[i] -= example.first * example.second[i];
+			}
+		}
+	}
+
+	double norm = 0;
+	for(int i = 0; i < delta.size(); i++) {
+		delta[i] /= training.size();
+		weights[i] -= delta[i]; // learning rate = 1
+		norm += delta[i] * delta[i]; // sum of squares for vector norm
+	}
+	norm = sqrt(norm); // sqrt of sum of squares for vector norm
+	
+
+	return norm;
 }
 
 // takes initial weights, training data, returns weight vector & total SSE error
