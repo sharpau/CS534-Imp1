@@ -47,6 +47,8 @@ void doGradients(
 		trainingFile.get();
 
 		std::vector<double> example;
+		// first parameter is added to allow for w_0
+		example.push_back(1);
 		example.push_back(x1);
 		example.push_back(x2);
 		example.push_back(x3);
@@ -93,6 +95,8 @@ void doGradients(
 		testFile.get();
 
 		std::vector<double> example;
+		// first parameter is added to allow for w_0
+		example.push_back(1);
 		example.push_back(x1);
 		example.push_back(x2);
 		example.push_back(x3);
@@ -111,23 +115,24 @@ void doGradients(
 
 
 	// DO THIS: output trial results in some format
-
-	cout << "gradient descent learning weight: " << gradientLearningRate * trainingData.size() << "/" << trainingData.size() << endl;
-	cout << "batch gradient weights: " << batchGradientWeights[0] << ", " << batchGradientWeights[1] << ", " << batchGradientWeights[2] << endl;
+	ofstream gradientOut;
+	gradientOut.open("gradientOut.txt");
+	gradientOut << "gradient descent learning weight: " << gradientLearningRate * trainingData.size() << "/" << trainingData.size() << endl;
+	gradientOut << "batch gradient weights: " << batchGradientWeights[0] << ", " << batchGradientWeights[1] << ", " << batchGradientWeights[2] << ", " << batchGradientWeights[3] << endl;
+	gradientOut << "batch gradient sse: " << endl;
 	for(vector<double>::size_type i = 0; i<batchGradientTrainingError.size(); i++){
-		cout << "batch gradient sse " << i << ":" << batchGradientTrainingError[i] << endl;
+		 gradientOut << batchGradientTrainingError[i] << endl;
 	}
-	cout << "batch gradient test sse: " << batchGradientTestError << endl;
+	gradientOut << "batch gradient test sse: " << batchGradientTestError << endl;
 
-	cout << "stochastic gradient weights: " << stochasticGradientWeights[0] << ", " << stochasticGradientWeights[1] << ", " << stochasticGradientWeights[2] << endl;
+	gradientOut << "stochastic gradient weights: " << stochasticGradientWeights[0] << ", " << stochasticGradientWeights[1] << ", " << stochasticGradientWeights[2] << ", " << stochasticGradientWeights[3] << endl;
+	gradientOut << "stochastic gradient sse: " << endl;
 	for(vector<double>::size_type i = 0; i<stochasticGradientTrainingError.size(); i++){
-		cout << "stochastic gradient sse " << i << ":" << stochasticGradientTrainingError[i] << endl;
+		gradientOut << stochasticGradientTrainingError[i] << endl;
 	}
-	cout << "stochastic gradient test sse: " << stochasticGradientTestError << endl;
+	gradientOut << "stochastic gradient test sse: " << stochasticGradientTestError << endl;
+	gradientOut.close();
 
-	// makeshift breakpoint
-	int tempo;
-	cin >> tempo;
 
 }
 
