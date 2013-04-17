@@ -237,7 +237,6 @@ double testGradientDescent(
 		sse = 0;
 		for(i = 0; i<test.size(); i++){
 			result1 = 0;
-			for(j = 0; j<weights.size(); j++){
 
 			for(j = 0; j<weights.size(); j++){
 				result1 += weights[j] * test[i][j];
