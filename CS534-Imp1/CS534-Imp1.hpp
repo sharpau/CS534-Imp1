@@ -1,3 +1,28 @@
+// function prototypes and includes
+
+const int num_epochs = 10;
+
+
+
+void doGradients(
+	void
+	);
+
+double batchGradientDescent(
+	vector<vector<double>> training, 
+	vector<double> &weights,
+	double learningRate
+	);
+double stochasticGradientDescent(
+	vector<vector<double>> training, 
+	vector<double> &weights,
+	double learningRate
+	);
+double testGradientDescent(
+		vector<vector<double>> test,
+		vector<double> &weights
+	);
+
 void batchPerceptron(
 	void
 	);

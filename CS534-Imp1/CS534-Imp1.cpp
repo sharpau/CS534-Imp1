@@ -10,28 +10,24 @@
 #include <assert.h>
 #include "CS534-Imp1.hpp"
 
-const int num_epochs = 10;
 
 using namespace std;
 
-// function prototypes
-double batchGradientDescent(
-	vector<vector<double>> training, 
-	vector<double> &weights,
-	double learningRate
-	);
-double stochasticGradientDescent(
-	vector<vector<double>> training, 
-	vector<double> &weights,
-	double learningRate
-	);
-double testGradientDescent(
-		vector<vector<double>> test,
-		vector<double> &weights
-	);
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	doGradients();
+
+	batchPerceptron();
+
+	votedPerceptron();
+
+	return 0;
+}
+
+void doGradients(
+	void
+	) {
 	// loop var
 	int i;
 
@@ -115,12 +111,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	stochasticGradientTestError = testGradientDescent(testData, stochasticGradientWeights);
 
 	// DO THIS: output trial results in some format
-
-	batchPerceptron();
-
-	votedPerceptron();
-
-	return 0;
 }
 
 // takes initial weights, test & training data, returns weight vector & total SSE error
@@ -239,6 +229,7 @@ double testGradientDescent(
 		return sse;
 }
 
+// runs all the batch perceptron-related stuff, from file input to eventual output (TODO)
 void batchPerceptron(
 	void
 	) {
