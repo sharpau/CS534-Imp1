@@ -73,7 +73,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	// run batch gradient descent training
 	for(i = 0; i<num_epochs; i++){
-		gradientLearningRate = (1 / trainingData.size());
+		gradientLearningRate = (1.0f / trainingData.size());
 		batchGradientTrainingError.push_back(batchGradientDescent(trainingData, batchGradientWeights, gradientLearningRate));
 	}
 	// run stochastic gradient descent training
