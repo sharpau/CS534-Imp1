@@ -54,8 +54,13 @@ void doGradients(
 		example.push_back(x3);
 		example.push_back(y);
 
+		//cout << example[0] << " " << example[1] << " " << example[2] << " " << example[3] << " " << example[4] << " " << example.size() << endl;
+
 		trainingData.push_back(example);
 	}
+	// remove duplicate final element
+	trainingData.pop_back();
+
 
 	vector<double> batchGradientWeights (trainingData[0].size()-1);
 	vector<double> stochasticGradientWeights (trainingData[0].size()-1);
@@ -70,7 +75,7 @@ void doGradients(
 
 	// run batch gradient descent training
 	for(i = 0; i<num_epochs; i++){
-		gradientLearningRate = (1.0f / trainingData.size());
+		gradientLearningRate = (1.0f / trainingData.size()-1);
 		batchGradientTrainingError.push_back(batchGradientDescent(trainingData, batchGradientWeights, gradientLearningRate));
 	}
 	// run stochastic gradient descent training
@@ -104,6 +109,9 @@ void doGradients(
 
 		testData.push_back(example);
 	}
+	// remove duplicate final element
+	testData.pop_back();
+
 	random_shuffle(testData.begin(), testData.end());
 	
 	double batchGradientTestError;
