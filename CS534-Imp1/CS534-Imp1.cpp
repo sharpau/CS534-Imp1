@@ -10,16 +10,18 @@
 #include <assert.h>
 #include "CS534-Imp1.hpp"
 
+const int numEpochs = 10;
+
 using namespace std;
-
-
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	// loop var
+	int i;
+
 	// read in regression training
+	double gradientLearningRate;
 	vector<vector<double>> trainingData;
-	vector<double> batchTrainingError;
-	double batchTestError;
 
 	ifstream trainingFile("regression-train.csv");
 	while(trainingFile.good()) {
@@ -41,8 +43,29 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		trainingData.push_back(example);
 	}
-	// randomize order for stochastic
-	random_shuffle(trainingData.begin(), trainingData.end());
+
+	vector<double> batchGradientWeights;
+	vector<double> stochasticGradientWeights;
+	vector<double> batchGradientTrainingError;
+	vector<double> stochasticGradientTrainingError;
+
+	//init weight vectors
+	for(i = 0; i<trainingData[0].size(); i++){
+		batchGradientWeights[i] = 0;
+		stochasticGradientWeights[i] = 0;
+	}
+
+	// run batch gradient descent training
+	for(i = 0; i<numEpochs; i++){
+		gradientLearningRate = (1 / trainingData.size());
+		batchGradientTrainingError.push_back(batchGradientDescent(trainingData, batchGradientWeights, gradientLearningRate));
+	}
+	// run stochastic gradient descent training
+	for(i = 0; i<numEpochs; i++){
+		// randomize order for stochastic
+		random_shuffle(trainingData.begin(), trainingData.end());
+		stochasticGradientTrainingError.push_back(stochasticGradientDescent(trainingData, stochasticGradientWeights, gradientLearningRate));
+	}
 
 	// read in regression test
 	vector<vector<double>> testData;
@@ -68,6 +91,14 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 	random_shuffle(testData.begin(), testData.end());
 	
+	double batchGradientTestError;
+	double stochasticGradientTestError;
+
+	// run accuracy test trials
+	batchGradientTestError = testGradientDescent(testData, batchGradientWeights);
+	stochasticGradientTestError = testGradientDescent(testData, stochasticGradientWeights);
+
+	// DO THIS: output trial results in some format
 
 	// read in classification training data
 	vector<pair<int, vector<double>>> twoGaussian;
@@ -127,7 +158,6 @@ int _tmain(int argc, _TCHAR* argv[])
 // takes initial weights, test & training data, returns weight vector & total SSE error
 double batchGradientDescent(
 	vector<vector<double>> training, 
-	vector<vector<double>> test,
 	vector<double> &weights,
 	double learningRate
 	) {
@@ -162,7 +192,7 @@ double batchGradientDescent(
 				result2 = result1 - training[i][weights.size()-1];
 			}
 			sse += 0.5 * pow(result2, 2);
-			for(j = 0; j<training.size()-1; j++){
+			for(j = 0; j<weights.size(); j++){
 				gradient[j] += result2 * training[i][j];
 			}
 		}
@@ -177,7 +207,7 @@ double batchGradientDescent(
 double stochasticGradientDescent(
 	vector<vector<double>> training, 
 	vector<double> &weights,
-	double learningRate,
+	double learningRate
 	) {
 
 		int i, j;
@@ -212,7 +242,7 @@ double stochasticGradientDescent(
 				result2 = result1 - training[i][weights.size()-1];
 			}
 			sse += 0.5 * pow(result2, 2);
-			for(j = 0; j<training.size()-1; j++){
+			for(j = 0; j<weights.size(); j++){
 				gradient[j] += result2 * training[i][j];
 			}
 			for(j = 0; j<weights.size(); j++){
