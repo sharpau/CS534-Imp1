@@ -174,13 +174,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	vector<double> vWeights(2, 0);
 	vector<double> errorHistory;
 	vector<vector<double>> weightHistory;
-	weightHistory.push_back(vWeights);
+	//weightHistory.push_back(vWeights);
 	vector<int> c;
-	c.push_back(0);
-	int n = 0;
 	for(int t = 0; t < 100; t++) {
 		// randomize for each epoch
 		random_shuffle(irisData.begin(), irisData.end());
+		c.push_back(0);
 
 		for(auto example : irisData) {
 			double um = 0;
@@ -191,8 +190,7 @@ int _tmain(int argc, _TCHAR* argv[])
 				for(int i = 0; i < vWeights.size(); i++) {
 					vWeights[i] += (example.second[i] * example.first);
 				}
-				n++;
-				c[t] = 0;
+				//c[t] = 0;
 			}
 			else {
 				c[t]++;
@@ -203,7 +201,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		errorHistory.push_back(0);
 		for(auto example : irisData) {
 			double voteResult = 0;
-			for(int i = 0; i < t + 2; i++) {
+			for(int i = 0; i < t + 1; i++) {
 				double thisVote = 0;
 				for(int j = 0; j < vWeights.size(); j++) {
 					thisVote += weightHistory[t][j] * example.second[j];
