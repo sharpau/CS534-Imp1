@@ -15,9 +15,9 @@ using namespace std;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	doGradients();
+	//doGradients();
 
-	batchPerceptron();
+	//batchPerceptron();
 
 	votedPerceptron();
 
@@ -284,6 +284,7 @@ void batchPerceptron(
 
 		twoGaussian.push_back(make_pair(y, example));
 	}
+	twoGaussianCSV.close();
 
 	vector<double> errors;
 	double currentError;
@@ -297,8 +298,18 @@ void batchPerceptron(
 		currentError = batchPerceptronEpoch(twoGaussian, weights, misClass);
 		errors.push_back(currentError);
 		misClassHistory.push_back(misClass);
-	} while(abs(currentError) > 0.01); // never converges to <.06, but <.07 works
+	} while(abs(currentError) > 0.01);
 	// TODO: write weights, currentError to CSV files
+
+	ofstream twoGaussianWeights("twoGaussianWeights.csv");
+	twoGaussianWeights << weights[0] << "," << weights[1] << "," << weights[2];
+	twoGaussianWeights.close();
+
+	ofstream twoGaussianHistory("twoGaussianHistory.csv");
+	for(int i = 0; i < misClassHistory.size(); i++) {
+		twoGaussianHistory << i << "," << misClassHistory[i] << "\n";
+	}
+	twoGaussianHistory.close();
 }
 
 // takes initial weights, training data, returns weight vector & error (norm of delta)
@@ -365,6 +376,7 @@ void votedPerceptron(
 
 		irisData.push_back(make_pair(y, example));
 	}
+	irisCSV.close();
 
 	vector<double> vWeights(irisData[0].second.size(), 0);
 	vector<vector<double>> weightHistory;
@@ -408,11 +420,44 @@ void votedPerceptron(
 				for(int k = 0; k < vWeights.size(); k++) {
 					thisVote += weightHistory[j][k] * example.second[k];
 				}
-				voteResult += sign(thisVote);
+				voteResult += c[j] * sign(thisVote);
 			}
 			if(example.first != sign(voteResult)) {
 				errorHistory[i]++;
 			}
+		}
+	}
+
+	// find decision boundary
+	vector<pair<int, vector<double>>> boundaryData;
+	// feature 1 ranges from 1 to 7, feature 2 from 0 to 2.5
+	for(int i = 100; i < 700; i++) {
+		for(int j = 0; j < 300; j++) {
+			vector<double> fakeFeatures;
+			fakeFeatures.push_back(1.0f);
+			fakeFeatures.push_back(i/100.0f);
+			fakeFeatures.push_back(j/100.0f);
+			boundaryData.push_back(make_pair(0, fakeFeatures));
+		}
+	}
+	for(auto example : boundaryData) {
+		// all weight sets up to this point will vote
+		double voteResult = 0;
+		for(int j = 0; j <= n; j++) {
+			double thisVote = 0;
+			for(int k = 0; k < vWeights.size(); k++) {
+				thisVote += weightHistory[j][k] * example.second[k];
+			}
+			voteResult += c[j] * sign(thisVote);
+		}
+		example.first = sign(voteResult);
+	}
+
+	// find average weight
+	vector<double> wAvg(vWeights.size(), 0);
+	for(int i = 0; i < n; i++) {
+		for(int j = 0; j < vWeights.size(); j++) {
+			wAvg[j] += c[i] * weightHistory[i][j];
 		}
 	}
 }
