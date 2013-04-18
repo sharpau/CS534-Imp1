@@ -428,6 +428,12 @@ void votedPerceptron(
 		}
 	}
 
+	ofstream irisHistory("irisHistory.csv");
+	for(int i = 0; i < errorHistory.size(); i++) {
+		irisHistory << i << "," << errorHistory[i] << "\n";
+	}
+	irisHistory.close();
+
 	// find decision boundary
 	vector<pair<int, vector<double>>> boundaryData;
 	// feature 1 ranges from 1 to 7, feature 2 from 0 to 2.5
@@ -440,7 +446,7 @@ void votedPerceptron(
 			boundaryData.push_back(make_pair(0, fakeFeatures));
 		}
 	}
-	for(auto example : boundaryData) {
+	for(auto & example : boundaryData) {
 		// all weight sets up to this point will vote
 		double voteResult = 0;
 		for(int j = 0; j <= n; j++) {
@@ -452,6 +458,11 @@ void votedPerceptron(
 		}
 		example.first = sign(voteResult);
 	}
+	ofstream irisBoundary("irisBoundary.csv");
+	for(int i = 0; i < boundaryData.size(); i++) {
+		irisBoundary << boundaryData[i].first << "," << boundaryData[i].second[1] << "," << boundaryData[i].second[2] << "\n";
+	}
+	irisBoundary.close();
 
 	// find average weight
 	vector<double> wAvg(vWeights.size(), 0);
@@ -460,4 +471,6 @@ void votedPerceptron(
 			wAvg[j] += c[i] * weightHistory[i][j];
 		}
 	}
+	ofstream irisAvg("irisAvg.csv");
+	irisAvg << wAvg[0] << "," << wAvg[1] << "," << wAvg[2];
 }
