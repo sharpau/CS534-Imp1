@@ -17,9 +17,9 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	doGradients();
 
-	/*batchPerceptron();
+	batchPerceptron();
 
-	votedPerceptron();*/
+	votedPerceptron();
 
 	return 0;
 }
