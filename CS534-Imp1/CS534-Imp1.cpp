@@ -383,6 +383,7 @@ void votedPerceptron(
 	weightHistory.push_back(vWeights);
 	vector<int> c(1, 0); // c_0 = 0
 	int n = 0; // n = number of weight sets
+	vector<int> errorHistory(100, 0);
 	for(int t = 0; t < 100; t++) {
 		// randomize for each epoch
 		random_shuffle(irisData.begin(), irisData.end());
@@ -405,17 +406,12 @@ void votedPerceptron(
 				c[n]++;
 			}
 		}
-	}
-	
-	// time to vote!
-	// want to see each vote from history of size 1 to n
-	vector<int> errorHistory(n, 0);
-	for(int i = 0; i < n; i++) {
+		// time to vote!
 		// voting on all examples
 		for(auto example : irisData) {
 			// all weight sets up to this point will vote
 			double voteResult = 0;
-			for(int j = 0; j <= i; j++) {
+			for(int j = 0; j <= n; j++) {
 				double thisVote = 0;
 				for(int k = 0; k < vWeights.size(); k++) {
 					thisVote += weightHistory[j][k] * example.second[k];
@@ -423,10 +419,12 @@ void votedPerceptron(
 				voteResult += c[j] * sign(thisVote);
 			}
 			if(example.first != sign(voteResult)) {
-				errorHistory[i]++;
+				errorHistory[t]++;
 			}
 		}
 	}
+	
+	
 
 	ofstream irisHistory("irisHistory.csv");
 	for(int i = 0; i < errorHistory.size(); i++) {
@@ -437,8 +435,8 @@ void votedPerceptron(
 	// find decision boundary
 	vector<pair<int, vector<double>>> boundaryData;
 	// feature 1 ranges from 1 to 7, feature 2 from 0 to 2.5
-	for(int i = 100; i < 700; i++) {
-		for(int j = 0; j < 300; j++) {
+	for(int i = 100; i < 700; i+=5) {
+		for(int j = 0; j < 300; j+=5) {
 			vector<double> fakeFeatures;
 			fakeFeatures.push_back(1.0f);
 			fakeFeatures.push_back(i/100.0f);
